@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+
+        <style>
+            
+            .color {
+            background-color: grey!important;
+            
+        }
+             
+             .img-fluid{
+                position: relative;
+                width: 100%;
+                height: 300px
+               
+             }
+             .two{
+                margin-left: 50px;
+             }
+             .btn{
+                margin-left: 25px;
+             }
+             .rounds{
+                border-radius: 50%;
+                height: 75px;
+                width: 75px;
+                margin-top: 45px;
+                margin-left: -40px;
+               
+             }
+             .converstion{
+                margin-top: 55px;
+             }
+             .param{
+                font-size: 25px;
+                
+             }
+             .inputtext{
+                font-size: 25px;
+             }
+             
+            
+             
+            
+            
+            
+           
+        </style>
+    </head>
+    <body>
+        <header>
+       <div class="container-md mt-5 container-lg ">
+            <img src="https://t3.ftcdn.net/jpg/04/34/58/54/360_F_434585463_zpdtTpTEbqQFfsp6RVEW6IIxEM9dHf86.jpg" alt="Image" class="img-fluid w-100">
+        </div>
+        </header>
+        <div class="container mt-5 bg-info-subtle border border-5 container-lg" >
+            <div class="row mt-5 two">
+                <div class="textinput col-3 ">
+                    <h1>Amount</h1>
+                    <input type="text" id="textbox" class="inputtext">
+                    </div>
+                    <div class="dropdown1 col-3 dropdown ">
+                        <h1>From</h1>
+                    <select id="select" class="dropdown-toggle"></select>
+                    
+                    </div>
+                    <div class="col-1 " >
+                        <button class="rounds param text-primary bg-black">⇆</button>
+                    </div>
+                    
+                    
+                    <div class="dropdown2 col-3">
+                        <h1>To</h1>
+                        <select id="select2"></select>
+                        
+                    </div>
+                    <div class="col-2 converstion">
+                        <button id="convert" type="button" class="ml-2 btn btn-outline-primary fw-bolder fs-5 btn-lg">convert</button>
+                    </div>
+                    
+                </div>
+            <div class="row">
+                <div class="text-center mt-5 ">
+                    
+                <p id="resultdisplay" class="mt-3"></p>
+                <p id="1usd=" class="mt-5"></p>
+                <p id="finalresult"></p>
+                </div>
+                </div>
+        </div>
+        
+
+
+        <script>
+            let secretkey="4e073b18b234915f35f5c3f72beef9a4"
+            let currencyexchangeapi=`http://data.fixer.io/api/latest?access_key=${secretkey}`
+            let select=document.getElementById("select")
+            select.style.height="50px"
+            select.style.width="200px"
+            let select2=document.getElementById("select2")
+            select2.style.height="50px"
+            select2.style.width="200px"
+            let input=document.getElementById("textbox")
+            input.style.height="40px"
+            input.style.width="200px"
+            let resultDisplay=document.getElementById("resultdisplay")
+            fetch(currencyexchangeapi).then(result=>result.json())
+            .then(currencyData=>{
+                Object.keys(currencyData.rates).forEach(element=>{
+                let option=document.createElement("option")
+                option.value=element
+                option.textContent=element
+                select.appendChild(option)
+            })
+                Object.keys(currencyData.rates).forEach(element=>{
+                    let option=document.createElement("option")
+                    option.value=element
+                    option.textContent=element
+                    select2.appendChild(option)
+                })
+            })
+            let button=document.getElementById("convert")
+            let textbox=document.getElementById("textbox")
+            textbox.style.height="50px"
+            // button.style.height="40px"
+            // button.style.width="100px"
+            button.addEventListener("click",function(){
+
+                let textbox=document.getElementById("textbox").value
+            if(textbox.trim()==""||isNaN(parseFloat(textbox))){
+                resultDisplay.textContent="Please enter valid Amount"
+                return
+            }
+            let amounttoexchange=parseFloat(textbox)
+            let sourcecurrency=select.value
+            let targetcurrency=select2.value
+            fetch(currencyexchangeapi)
+            .then(result=>result.json())
+            .then(currencyData=>{
+                let sourcerate=currencyData.rates[sourcecurrency]
+                let targetrate=currencyData.rates[targetcurrency]
+                if(!sourcerate||!targetrate){
+                    resultDisplay.textContent="Invalid Currencies"
+                    return
+                }
+                let finalresult=amounttoexchange * (targetrate / sourcerate)
+                let firstpara=document.getElementById("1usd=")
+                firstpara.textContent=amounttoexchange.toFixed(2)+" "+sourcecurrency+"="
+                firstpara.style.fontSize="30px"
+                firstpara.style.fontWeight="bold"
+                let finalResultElement = document.getElementById("finalresult");
+finalResultElement.style.fontSize = "50px";
+finalResultElement.textContent = finalresult.toFixed(2)+" "+targetcurrency; 
+                // resultDisplay.textContent=`${amounttoexchange.toFixed(2)}${firstpara} is equal to the ${finalresult.toFixed(2)} ${targetcurrency}`
+                resultDisplay.style.fontsize="40px"
+            })
+        })
+            
+            
+        
+           
+
+
+        </script>
+    </body>
+</html>
